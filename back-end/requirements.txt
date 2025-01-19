@@ -1,4 +1,5 @@
 audioop-lts==0.2.1
+PyAudio==0.2.14
 SpeechRecognition==3.14.0
 standard-aifc==3.13.0
 standard-chunk==3.13.0
