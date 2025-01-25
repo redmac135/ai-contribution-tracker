@@ -1,73 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { SpinningAnimation } from './components/SpinningAnimation';
+import React, { useEffect, useRef, useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { SpinningAnimation } from "./components/SpinningAnimation";
+import { useReactMediaRecorder } from "react-media-recorder";
 
 function App() {
-
   const [recording, setRecording] = useState(false);
-  const [media, setMedia] = useState<Blob[]>([]);
-  const[mediaRecorder, setMediaRecorder] = useState<MediaRecorder>();
+  const { status, startRecording, stopRecording, mediaBlobUrl } =
+    useReactMediaRecorder({ audio: true });
 
-  async function uploadAudio(blob: Blob) {
-		const formData = new FormData();
-		formData.append('audio', blob);
-		// Tmp user id
-		formData.append('useruid', '1');
-		return await fetch(`${process.env.REACT_APP_BACKEND_URL}entries/create/`, {
-			method: 'POST',
-			body: formData
-		})
-	}
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-	useEffect(() => {
-		const setupMediaDevice = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const tmpMediaRecorder = new MediaRecorder(stream);
-		  tmpMediaRecorder.ondataavailable = function (e) {
-        setMedia(media => [...media, e.data]);
-		  };
-		  tmpMediaRecorder.onstop = function () {
-		  	const blob = new Blob(media, { type: 'audio/ogg' });
-		  	uploadAudio(blob);
-		  };
-		  setMediaRecorder(tmpMediaRecorder);
-    }
+  async function uploadAudio() {
+    const responseBlob = await fetch(mediaBlobUrl as string);
+    const blob = await responseBlob.blob();
 
-    setupMediaDevice();
-	}, []);
+    const formData = new FormData();
+    formData.append("url", mediaBlobUrl as string);
 
-  function startRecording() {
-    console.log('started recording');
-    (mediaRecorder as MediaRecorder).start();
+    return await fetch(`${process.env.REACT_APP_BACKEND_URL}/speech/convert`, {
+      method: "POST",
+      body: formData,
+    });
   }
-  function stopRecording() {
-		console.log('stopped recording');
-		(mediaRecorder as MediaRecorder).stop();
-	}
-  function handleRecordingToggle() {
-		// note: this value is reversed as handle change gets called before bind is called.
+
+  useEffect(() => {
+    if (mediaBlobUrl) {
+      audioRef.current!.src = mediaBlobUrl;
+    }
+  }, [mediaBlobUrl]);
+
+  async function handleRecordingToggle() {
+    // note: this value is reversed as handle change gets called before bind is called.
     if (recording) {
       stopRecording();
       setRecording(false);
-		} else {
+      await uploadAudio();
+    } else {
       startRecording();
       setRecording(true);
-		}
+    }
   }
-
 
   return (
     <div className="App">
       <header className="App-header">
-
-        <label className="recordLabel" htmlFor="recordButton">fdjsghakaghsdkjf</label>
-        <input type='checkbox' id='recordButton' checked={recording} onChange={handleRecordingToggle} />
-
-        <SpinningAnimation/>
+        <label className="recordLabel" htmlFor="recordButton">
+          fdjsghakaghsdkjf
+        </label>
+        <input
+          type="checkbox"
+          id="recordButton"
+          checked={recording}
+          onChange={handleRecordingToggle}
+        />
+        <audio ref={audioRef} controls />
       </header>
     </div>
-
   );
 }
 
