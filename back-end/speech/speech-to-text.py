@@ -1,9 +1,13 @@
 import speech_recognition as sr
 
-r = sr.Recognizer()
+class Recognition:
+    def __init__(self):
+        self.r = sr.Recognizer()
 
-with sr.Microphone() as source:
-    print("Recognizing...")
-    audio_data = r.record(source, duration=5)
-    text = r.recognize_google(audio_data)
-    print(text)
+    def record(self):
+        with sr.Microphone() as source:
+            print("Recognizing...")
+            audio_data = self.r.record(source, duration=5)
+            text = self.r.recognize_google(audio_data)
+            print(text)
+            return text
