@@ -7,53 +7,69 @@ function App() {
 
   const [recording, setRecording] = useState(false);
   const [media, setMedia] = useState<Blob[]>([]);
-  const[mediaRecorder, setMediaRecorder] = useState<MediaRecorder>();
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>();
 
   async function uploadAudio(blob: Blob) {
-		const formData = new FormData();
-		formData.append('audio', blob);
-		// Tmp user id
-		formData.append('useruid', '1');
-		return await fetch(`${process.env.REACT_APP_BACKEND_URL}entries/create/`, {
-			method: 'POST',
-			body: formData
-		})
-	}
+    const formData = new FormData();
 
-	useEffect(() => {
-		const setupMediaDevice = async () => {
+    // Create a File with proper type information
+    const file = new File([blob], "recording", {
+      type: blob.type,  // This preserves the MIME type
+      lastModified: Date.now()
+    });
+
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/convert/', {
+        method: 'POST',
+        body: formData
+      });
+
+      // For debugging
+      console.log('Blob type:', blob.type);
+      console.log('Server response:', await response.json());
+
+      return await response.json();
+    } catch (error) {
+      console.error('Upload failed:', error);
+    }
+  }
+
+  useEffect(() => {
+    const setupMediaDevice = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const tmpMediaRecorder = new MediaRecorder(stream);
-		  tmpMediaRecorder.ondataavailable = function (e) {
+      tmpMediaRecorder.ondataavailable = function(e) {
         setMedia(media => [...media, e.data]);
-		  };
-		  tmpMediaRecorder.onstop = function () {
-		  	const blob = new Blob(media, { type: 'audio/ogg' });
-		  	uploadAudio(blob);
-		  };
-		  setMediaRecorder(tmpMediaRecorder);
+      };
+      tmpMediaRecorder.onstop = function() {
+        const blob = new Blob(media, { type: tmpMediaRecorder.mimeType });
+        uploadAudio(blob);
+      };
+      setMediaRecorder(tmpMediaRecorder);
     }
 
     setupMediaDevice();
-	}, []);
+  }, [media]);
 
   function startRecording() {
     console.log('started recording');
     (mediaRecorder as MediaRecorder).start();
   }
   function stopRecording() {
-		console.log('stopped recording');
-		(mediaRecorder as MediaRecorder).stop();
-	}
+    console.log('stopped recording');
+    (mediaRecorder as MediaRecorder).stop();
+  }
   function handleRecordingToggle() {
-		// note: this value is reversed as handle change gets called before bind is called.
+    // note: this value is reversed as handle change gets called before bind is called.
     if (recording) {
       stopRecording();
       setRecording(false);
-		} else {
+    } else {
       startRecording();
       setRecording(true);
-		}
+    }
   }
 
 
@@ -64,7 +80,6 @@ function App() {
         <label className="recordLabel" htmlFor="recordButton">fdjsghakaghsdkjf</label>
         <input type='checkbox' id='recordButton' checked={recording} onChange={handleRecordingToggle} />
 
-        <SpinningAnimation/>
       </header>
     </div>
 
