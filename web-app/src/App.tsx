@@ -23,7 +23,7 @@ function App() {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/convert/', {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/convert/`, {
         method: 'POST',
         body: formData
       });
