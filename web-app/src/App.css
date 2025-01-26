@@ -1,5 +1,4 @@
-.App {
-}
+.App {}
 
 
 .App-header {
@@ -13,11 +12,11 @@
   color: white;
 }
 
-.recordLabel{
+.recordLabel {
   color: red;
 }
 
-.title{
+.title {
   text-align: center;
   font-weight: 500;
   transform: translateY(-100px);
@@ -27,11 +26,19 @@
 
 
 .rectangle {
-  width: 300px; /* Rectangle width */
-  height: 150px; /* Rectangle height */
-  background-color: white; /* White rectangle */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for better visibility */
+  width: 300px;
+  /* Rectangle width */
+  height: 150px;
+  /* Rectangle height */
+  background-color: white;
+  /* White rectangle */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  /* Optional shadow for better visibility */
   position: relative;
-  top: 100px; /* Moves the rectangle slightly lower */
+  top: 100px;
+  /* Moves the rectangle slightly lower */
   border-radius: 20px;
+  color: black;
+  font-size: 20px;
+  text-align: center;
 }

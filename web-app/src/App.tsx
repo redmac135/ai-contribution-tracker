@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import './checkButton.css';
 import './micButton.css';
@@ -10,6 +9,7 @@ function App() {
   const [recording, setRecording] = useState(false);
   const [media, setMedia] = useState<Blob[]>([]);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>();
+  const [result, setResult] = useState<string>("");
 
   async function uploadAudio(blob: Blob) {
     const formData = new FormData();
@@ -30,9 +30,14 @@ function App() {
 
       // For debugging
       console.log('Blob type:', blob.type);
-      console.log('Server response:', await response.json());
 
-      return await response.json();
+      const serverResult = await response.json()
+      console.log('Server response:', serverResult);
+
+      console.info('Transcription:', serverResult.transcription);
+      setResult(serverResult.transcription);
+
+      return serverResult;
     } catch (error) {
       console.error('Upload failed:', error);
     }
@@ -84,7 +89,11 @@ function App() {
           <img className="micButton" src="/voice.png" alt="" />
         </label>}
         <input className="checkButton" type='checkbox' id='recordButton' checked={recording} onChange={handleRecordingToggle} />
-        <div className="rectangle"></div>
+        <div className="rectangle">
+          <div className="transcription">
+            {result}
+          </div>
+        </div>
       </header>
     </div>
 

@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import whisper
 from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 
 
 # Load Whisper model once at startup
@@ -17,6 +18,14 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For development only, specify exact origin in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 UPLOAD_DIR = "audio_uploads"
 Path(UPLOAD_DIR).mkdir(exist_ok=True)
@@ -48,6 +57,17 @@ async def upload_and_transcribe(file: UploadFile = File(...)):
 
         # Transcribe with Whisper
         result = app.state.whisper_model.transcribe(file_path)
+
+        print(
+            {
+                "filename": filename,
+                "transcription": result["text"],
+                "language": result["language"],
+                "processing_time": (
+                    result["segments"][0]["seek"] if result["segments"] else 0
+                ),
+            }
+        )
 
         return {
             "filename": filename,
