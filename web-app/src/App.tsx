@@ -23,7 +23,7 @@ function App() {
     formData.append('file', file);
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/convert/`, {
+      const response = await fetch(`https://ollama.ethanzhao.me/convert/`, {
         method: 'POST',
         body: formData
       });
