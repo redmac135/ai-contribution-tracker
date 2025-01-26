@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import './checkButton.css';
+import './micButton.css';
 import { SpinningAnimation } from './components/SpinningAnimation';
 
 function App() {
@@ -76,10 +78,13 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-
-        <label className="recordLabel" htmlFor="recordButton">fdjsghakaghsdkjf</label>
-        <input type='checkbox' id='recordButton' checked={recording} onChange={handleRecordingToggle} />
-
+        <div className="title">Start Tracking Participation</div>
+        {recording && <label className="recordLabel" htmlFor="recordButton" ><SpinningAnimation /></label>}
+        {!recording && <label className="micNotOn" htmlFor="recordButton">
+          <img className="micButton" src="/voice.png" alt="" />
+        </label>}
+        <input className="checkButton" type='checkbox' id='recordButton' checked={recording} onChange={handleRecordingToggle} />
+        <div className="rectangle"></div>
       </header>
     </div>
 

@@ -8,7 +8,7 @@ export function SpinningAnimation(){
             <div id="ring"></div>
             <div id="ring"></div>
             <div id="ring"></div>
-            <div id="h3">loading</div>
+            <div id="h3">Recording</div>
         </div>
     )
 }

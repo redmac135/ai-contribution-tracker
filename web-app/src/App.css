@@ -1,5 +1,4 @@
 .App {
-  text-align: center;
 }
 
 
@@ -10,10 +9,29 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(50px + 2vmin);
   color: white;
 }
 
 .recordLabel{
   color: red;
+}
+
+.title{
+  text-align: center;
+  font-weight: 500;
+  transform: translateY(-100px);
+  color: oklch(0.789 0.154 211.53);
+}
+
+
+
+.rectangle {
+  width: 300px; /* Rectangle width */
+  height: 150px; /* Rectangle height */
+  background-color: white; /* White rectangle */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for better visibility */
+  position: relative;
+  top: 100px; /* Moves the rectangle slightly lower */
+  border-radius: 20px;
 }
