@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import "./checkButton.css";
 import "./micButton.css";
-import { SpinningAnimation } from "./components/SpinningAnimation";
+import { SpinningAnimation } from "../components/SpinningAnimation";
 
 function App() {
   const [recording, setRecording] = useState(false);
