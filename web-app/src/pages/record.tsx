@@ -4,7 +4,7 @@ import "./checkButton.css";
 import "./micButton.css";
 import { SpinningAnimation } from "../components/SpinningAnimation";
 
-function App() {
+function RecordPage() {
   const [recording, setRecording] = useState(false);
   const [media, setMedia] = useState<Blob[]>([]);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>();
@@ -107,4 +107,4 @@ function App() {
   );
 }
 
-export default App;
+export default RecordPage;
