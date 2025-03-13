@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import "./App.css";
-import "./checkButton.css";
-import "./micButton.css";
+import "../App.css";
+import "../checkButton.css";
+import "../micButton.css";
 import { SpinningAnimation } from "../components/SpinningAnimation";
 
 function RecordPage() {
