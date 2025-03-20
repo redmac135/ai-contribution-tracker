@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './table.css';
+import styles from './table.module.css';
 
 const initialStudents = [
     { name: 'Student 1', contributions: [8, 7, 9, 6] },
@@ -14,6 +14,8 @@ const dates = ['2025-03-16', '2025-03-17', '2025-03-18', '2025-03-19'];
 function TablePage() {
     const [students, setStudents] = useState(initialStudents);
     const [newStudentName, setNewStudentName] = useState('');
+    const [editingCell, setEditingCell] = useState<{ row: number, col: number } | null>(null);
+    const [editValue, setEditValue] = useState('');
 
     const handleAddStudent = () => {
         if (newStudentName.trim() !== '') {
@@ -33,6 +35,27 @@ function TablePage() {
         return (total / contributions.length).toFixed(2);
     };
 
+    const handleCellClick = (row: number, col: number, value: number) => {
+        setEditingCell({ row, col });
+        setEditValue(value.toString());
+    };
+
+    const handleEditChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEditValue(event.target.value);
+    };
+
+    const handleEditKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter' && editingCell) {
+            const updatedStudents = [...students];
+            const newValue = parseInt(editValue, 10);
+            if (!isNaN(newValue)) {
+                updatedStudents[editingCell.row].contributions[editingCell.col] = newValue;
+                setStudents(updatedStudents);
+            }
+            setEditingCell(null);
+        }
+    };
+
     return (
         <div>
             <table>
@@ -46,18 +69,31 @@ function TablePage() {
                     </tr>
                 </thead>
                 <tbody>
-                    {students.map((student, index) => (
-                        <tr key={index}>
+                    {students.map((student, rowIndex) => (
+                        <tr key={rowIndex}>
                             <td>{student.name}</td>
-                            {student.contributions.map((contribution, idx) => (
-                                <td key={idx}>{contribution}</td>
+                            {student.contributions.map((contribution, colIndex) => (
+                                <td key={colIndex} onClick={() => handleCellClick(rowIndex, colIndex, contribution)}>
+                                    {editingCell && editingCell.row === rowIndex && editingCell.col === colIndex ? (
+                                        <input
+                                            type="text"
+                                            value={editValue}
+                                            onChange={handleEditChange}
+                                            onKeyPress={handleEditKeyPress}
+                                            onBlur={() => setEditingCell(null)}
+                                            autoFocus
+                                        />
+                                    ) : (
+                                        contribution
+                                    )}
+                                </td>
                             ))}
                             <td>{calculateAverage(student.contributions)}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <div>
+            <div className="input-container">
                 <input
                     type="text"
                     value={newStudentName}
