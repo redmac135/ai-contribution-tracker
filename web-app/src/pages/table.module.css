@@ -5,12 +5,36 @@ body, html {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    background: radial-gradient(circle, #b2ebf2 0%, #e0f7fa 100%);
+    font-family: Arial, sans-serif;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes highlight {
+    from {
+        background-color: #e0f7fa;
+    }
+    to {
+        background-color: #b2ebf2;
+    }
 }
 
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .table {
@@ -19,26 +43,28 @@ body, html {
     border-radius: 10px; /* Rounded edges */
     overflow: hidden; /* Ensure rounded corners are visible */
     margin-bottom: 20px; /* Space between table and input section */
+    background: radial-gradient(circle, #b2ebf2 0%, #e0f7fa 100%);
 }
 
 .th, .td {
-    border: 1px solid #ddd;
+    border: 1px solid #cbd5e0;
     padding: 8px;
     text-align: center;
-    background-color: oklch(0.984 0.019 200.873); /* Most table cells */
+    background-color: rgba(255, 255, 255, 0.8); /* Most table cells */
     width: 100px; /* Fixed width */
     height: 40px; /* Fixed height */
     box-sizing: border-box; /* Include padding and border in width and height */
     transition: background-color 0.3s, border-color 0.3s; /* Add transition for background and border */
+    animation: fadeIn 0.5s ease-in-out; /* Apply fadeIn animation */
 }
 
 .th {
-    background-color: oklch(0.52 0.105 223.128); /* Important cells */
+    background: radial-gradient(circle, #0097a7 0%, #00bcd4 100%); /* Important cells */
     color: white;
 }
 
 .td:first-child {
-    background-color: oklch(0.52 0.105 223.128); /* Important cells */
+    background: radial-gradient(circle, #0097a7 0%, #00bcd4 100%); /* Important cells */
     font-weight: bold;
     color: white;
 }
@@ -49,7 +75,7 @@ body, html {
 }
 
 .tbody .tr:nth-child(even) {
-    background-color: oklch(0.984 0.019 200.873); /* Most table cells */
+    background-color: rgba(255, 255, 255, 0.8); /* Most table cells */
 }
 
 .inputContainer {
@@ -62,23 +88,26 @@ body, html {
 .input {
     padding: 10px;
     font-size: 16px;
-    border: 1px solid #ddd;
+    border: 1px solid #cbd5e0;
     border-radius: 5px;
     width: 200px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .button {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #4CAF50;
+    background: radial-gradient(circle, #0097a7 0%, #00bcd4 100%);
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .button:hover {
-    background-color: #45a049;
+    background: radial-gradient(circle, #00bcd4 0%, #0097a7 100%);
 }
 
 .td input {
@@ -89,6 +118,10 @@ body, html {
     text-align: center;
     padding: 0;
     margin: 0;
-    background-color: oklch(0.984 0.019 200.873); /* Match the background color of the cell */
+    background-color: rgba(255, 255, 255, 0.8); /* Match the background color of the cell */
     transition: background-color 0.3s, border-color 0.3s; /* Add transition for background and border */
+}
+
+.td.editing {
+    animation: highlight 0.5s ease-in-out; /* Apply highlight animation */
 }
