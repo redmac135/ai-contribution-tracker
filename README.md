@@ -2,6 +2,7 @@
 
 ## Schema for MongoDB
 
+class
 ```json
 {
     id: mongoid
@@ -11,6 +12,7 @@
 }
 ```
 
+lecture
 ```json
 {
     id: mongoid
