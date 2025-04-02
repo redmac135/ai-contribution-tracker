@@ -15,7 +15,7 @@ import styles from "./page.module.css";
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement);
 
-type WaveformData = number[][];
+type WaveformData = number[];
 
 export default function RecordPage(): JSX.Element {
   const [recording, setRecording] = useState<boolean>(false);
@@ -27,11 +27,12 @@ export default function RecordPage(): JSX.Element {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const dataArrayRef = useRef<Uint8Array>(new Uint8Array(0));
+  const dataArrayRef = useRef<Uint8Array | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (recording) {
-      timerRef.current = setInterval(() => setTime((prev: number) => prev + 1), 1000);
+      timerRef.current = setInterval(() => setTime((prev) => prev + 1), 1000);
     } else if (timerRef.current) {
       clearInterval(timerRef.current);
     }
@@ -42,16 +43,16 @@ export default function RecordPage(): JSX.Element {
     };
   }, [recording]);
 
-  useEffect(() => {
-    if (recording && analyserRef.current && dataArrayRef.current) {
-      const updateWaveform = (): void => {
-        analyserRef.current!.getByteFrequencyData(dataArrayRef.current);
-        setWaveformData((prev: WaveformData) => [...prev, Array.from(dataArrayRef.current)]);
-        requestAnimationFrame(updateWaveform);
-      };
-      requestAnimationFrame(updateWaveform);
+  const updateWaveform = () => {
+    if (analyserRef.current && dataArrayRef.current) {
+      analyserRef.current.getByteFrequencyData(dataArrayRef.current);
+      if (dataArrayRef.current) {
+        setWaveformData(Array.from(dataArrayRef.current));
+      }
+      console.log(dataArrayRef.current);
+      animationFrameRef.current = requestAnimationFrame(updateWaveform);
     }
-  }, [recording]);
+  };
 
   const startRecording = async (): Promise<void> => {
     try {
@@ -70,8 +71,11 @@ export default function RecordPage(): JSX.Element {
       source.connect(analyser);
       audioContextRef.current = audioContext;
       analyserRef.current = analyser;
+      dataArrayRef.current = new Uint8Array(analyser.frequencyBinCount);
 
-      recorder.ondataavailable = (e: BlobEvent) => setAudioChunks((chunks: Blob[]) => [...chunks, e.data]);
+      updateWaveform();
+
+      recorder.ondataavailable = (e: BlobEvent) => setAudioChunks((chunks) => [...chunks, e.data]);
     } catch (err) {
       console.error("Error recording audio:", err);
     }
@@ -80,11 +84,15 @@ export default function RecordPage(): JSX.Element {
   const stopRecording = (): void => {
     if (mediaRecorder) {
       mediaRecorder.stop();
-      stream?.getTracks().forEach((track: MediaStreamTrack) => track.stop());
+      stream?.getTracks().forEach((track) => track.stop());
     }
     setRecording(false);
     setTime(0);
     audioContextRef.current?.close();
+
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
   };
 
   return (
@@ -93,22 +101,20 @@ export default function RecordPage(): JSX.Element {
         {recording ? <StopIcon className={styles.icon} /> : <MicrophoneIcon className={styles.icon} />}
       </Button>
       {recording && <p className={styles.timer}>Recording: {time}s</p>}
-      {recording && (
-        <div className={styles.chartContainer}>
-          <Line
-            data={{
-              labels: Array(waveformData.length).fill(""),
-              datasets: [{ data: waveformData, borderColor: "#3b82f6", borderWidth: 2, tension: 0.2 }],
-            }}
-            options={{
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: { x: { display: false }, y: { display: false } },
-              elements: { point: { radius: 0 } },
-            }}
-          />
-        </div>
-      )}
+      <div className={styles.chartContainer}>
+        <Line
+          data={{
+            labels: Array(waveformData.length).fill(""),
+            datasets: [{ data: waveformData, borderColor: "#3b82f6", borderWidth: 2, tension: 0.2 }],
+          }}
+          options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { x: { display: false }, y: { display: false } },
+            elements: { point: { radius: 0 } },
+          }}
+        />
+      </div>
     </div>
   );
 }
