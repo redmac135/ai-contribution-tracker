@@ -1,0 +1,30 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.recordButton {
+    margin-bottom: 20px;
+    width: 60px;
+    height: 60px;
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+}
+
+.timer {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.chartContainer {
+    width: 80%;
+    max-width: 600px;
+    height: 300px;
+}
