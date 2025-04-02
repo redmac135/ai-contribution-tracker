@@ -14,21 +14,26 @@ from pydantic import BaseModel
 from bson import ObjectId
 from pydantic import BaseModel, Field
 import requests
+from dotenv import load_dotenv
+from pymongo import MongoClient
 
 
+load_dotenv()
 
 # Will need to hide MongoDB aicontributor password
-uri = "mongodb+srv://philipdb:aicontributor@aicontributorcluster.vdubn.mongodb.net/?retryWrites=true&w=majority&appName=AiContributorCluster"
+uri = os.getenv("MONGO_URI")
 
 # Setting up the MongoDB client
-client = MongoClient(uri, server_api=ServerApi('1'))
+client = MongoClient(uri, server_api=ServerApi("1"))
 
 # Send a ping to confirm a successful connection
 try:
-    client.admin.command('ping')
+    client.admin.command("ping")
     print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
     print(e)
+
+db = client.get_database("contribution_tracker")
 
 
 class Student(BaseModel):
@@ -68,23 +73,25 @@ MIME_MAP = {
     "audio/wav": "wav",
 }
 
+
 @app.post("/student/")
 async def create_student(student: Student):
     try:
-        db = client.get_database('ai_contributor')
-        students_collection = db['StudentDB']
+        db = client.get_database("ai_contributor")
+        students_collection = db["StudentDB"]
         # Convert Pydantic model to dict
         # student_dict = student.model_dump()
-        student_dict = {
-            "name": "John Doe",
-            "contribution": 0
-        }
+        student_dict = {"name": "John Doe", "contribution": 0}
 
         result = students_collection.insert_one(student_dict)
-        student_dict = {key: str(value) if isinstance(value, ObjectId) else value for key, value in student_dict.items()}
+        student_dict = {
+            key: str(value) if isinstance(value, ObjectId) else value
+            for key, value in student_dict.items()
+        }
         return student_dict
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 # Separate test file
 # def test_create_student():
@@ -105,6 +112,7 @@ async def create_student(student: Student):
 
 
 # test_create_student()
+
 
 @app.post("/convert/")
 async def upload_and_transcribe(file: UploadFile = File(...)):
