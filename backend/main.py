@@ -33,7 +33,9 @@ try:
 except Exception as e:
     print(e)
 
-db = client.get_database("contribution_tracker")
+db = client.get_database("StudentTracker")
+
+# Collection name is "Responses"
 
 
 class Student(BaseModel):
