@@ -5,7 +5,20 @@ from pathlib import Path
 import whisper
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+from pymongo import MongoClient
 
+# Load environment variables
+load_dotenv()
+
+# Get MongoDB URI from .env
+MONGO_URI = os.getenv("MONGO_URI")
+
+# Create a MongoDB client
+client = MongoClient(MONGO_URI)
+
+# Access the database
+db = client["Responses"]
 
 # Load Whisper model once at startup
 @asynccontextmanager
