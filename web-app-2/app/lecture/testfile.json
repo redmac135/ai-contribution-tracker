@@ -1,0 +1,50 @@
+{
+  "Class": [
+    {
+      "id": 1,
+      "name": "Class Name",
+      "students": [
+        {
+          "id": 1,
+          "name": "Student Name",
+          "marks": 100
+        },
+        {
+          "id": 2,
+          "name": "Student Name",
+          "marks": 100
+        },
+        {
+          "id": 2,
+          "name": "Student Name",
+          "marks": 100
+        }
+      ],
+      "Lectures": [{ "ids": [1, 2, 3] }]
+    }
+  ],
+  "Lectures": [
+    {
+      "id": 1,
+      "date": "2025-04-01",
+      "Contribution": [
+        {
+          "id": 1,
+          "name": "Contribution Name",
+          "score": 100
+        },
+        {
+          "id": 1,
+          "name": "Contribution Name",
+          "score": 100
+        },
+        {
+          "id": 1,
+          "name": "Contribution Name",
+          "score": 100
+        }
+      ],
+      "byStudent": [{ "name ": "student name", "OverallScore": 6 }]
+    }
+  ]
+}

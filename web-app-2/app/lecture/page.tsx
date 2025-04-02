@@ -14,9 +14,9 @@ export default function LecturePage(): JSX.Element {
   const [students] = useState<Student[]>([
     {
       id: 1,
-      name: 'Name 1',
+      name: `'Name 1'`,
       score: 6,
-      contribution: ['Contribution 1', 'Contrbution 2', 'contribution3'],
+      contribution: [`'Contribution 1', 'Contrbution 2', 'contribution3'`],
     },
     {
       id: 2,
@@ -69,15 +69,13 @@ export default function LecturePage(): JSX.Element {
                     key={contribution}
                     className="text-sm text-gray-600 mt-1"
                   >
-                    Class Comment: "{contribution}"
+                    <b>Class Comment:</b> &quot;{contribution}&quot;
                   </span>
                 ))}
-
-                {/* <span className="text-sm text-gray-600 mt-1">
-                  {student.contribution}
-                </span> */}
               </div>
-              <span className="text-lg font-semibold">{student.score}</span>
+              <span className="text-lg font-semibold">
+                Total Score: {student.score}/10
+              </span>
             </div>
           ))}
         </div>
