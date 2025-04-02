@@ -21,7 +21,9 @@ export default function RecordPage(): JSX.Element {
   const [recording, setRecording] = useState<boolean>(false);
   const [time, setTime] = useState<number>(0);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
+    null
+  );
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [waveformData, setWaveformData] = useState<WaveformData>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -49,14 +51,15 @@ export default function RecordPage(): JSX.Element {
       if (dataArrayRef.current) {
         setWaveformData(Array.from(dataArrayRef.current));
       }
-      console.log(dataArrayRef.current);
+      //console.log(dataArrayRef.current);
       animationFrameRef.current = requestAnimationFrame(updateWaveform);
     }
   };
 
   const startRecording = async (): Promise<void> => {
     try {
-      const audioStream: MediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const audioStream: MediaStream =
+        await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder: MediaRecorder = new MediaRecorder(audioStream);
       setStream(audioStream);
       setMediaRecorder(recorder);
@@ -65,7 +68,8 @@ export default function RecordPage(): JSX.Element {
       recorder.start();
 
       const audioContext: AudioContext = new AudioContext();
-      const source: MediaStreamAudioSourceNode = audioContext.createMediaStreamSource(audioStream);
+      const source: MediaStreamAudioSourceNode =
+        audioContext.createMediaStreamSource(audioStream);
       const analyser: AnalyserNode = audioContext.createAnalyser();
       analyser.fftSize = 128;
       source.connect(analyser);
@@ -75,7 +79,8 @@ export default function RecordPage(): JSX.Element {
 
       updateWaveform();
 
-      recorder.ondataavailable = (e: BlobEvent) => setAudioChunks((chunks) => [...chunks, e.data]);
+      recorder.ondataavailable = (e: BlobEvent) =>
+        setAudioChunks((chunks) => [...chunks, e.data]);
     } catch (err) {
       console.error("Error recording audio:", err);
     }
@@ -93,12 +98,49 @@ export default function RecordPage(): JSX.Element {
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
+
+    uploadAudio(audioChunks);
   };
+
+  async function uploadAudio(blob: Blob[]) {
+    const formData = new FormData();
+
+    const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+
+    // Create a File with proper type information
+    const file = new File([audioBlob], "recording", {
+      type: audioBlob.type, // This preserves the MIME type
+      lastModified: Date.now(),
+    });
+
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/convert/`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const serverResult = await response.json();
+      console.log("Server response:", serverResult);
+
+      console.info("Transcription:", serverResult.transcription);
+    } catch (error) {
+      console.error("Upload failed:", error);
+    }
+  }
 
   return (
     <div className={styles.container}>
-      <Button onPress={recording ? stopRecording : startRecording} className={styles.recordButton}>
-        {recording ? <StopIcon className={styles.icon} /> : <MicrophoneIcon className={styles.icon} />}
+      <Button
+        onPress={recording ? stopRecording : startRecording}
+        className={styles.recordButton}
+      >
+        {recording ? (
+          <StopIcon className={styles.icon} />
+        ) : (
+          <MicrophoneIcon className={styles.icon} />
+        )}
       </Button>
       {recording && <p className={styles.timer}>Recording: {time}s</p>}
       {recording && (
@@ -106,7 +148,14 @@ export default function RecordPage(): JSX.Element {
           <Line
             data={{
               labels: Array(waveformData.length).fill(""),
-              datasets: [{ data: waveformData, borderColor: "#3b82f6", borderWidth: 2, tension: 0.2 }],
+              datasets: [
+                {
+                  data: waveformData,
+                  borderColor: "#3b82f6",
+                  borderWidth: 2,
+                  tension: 0.2,
+                },
+              ],
             }}
             options={{
               responsive: true,
