@@ -101,20 +101,22 @@ export default function RecordPage(): JSX.Element {
         {recording ? <StopIcon className={styles.icon} /> : <MicrophoneIcon className={styles.icon} />}
       </Button>
       {recording && <p className={styles.timer}>Recording: {time}s</p>}
-      <div className={styles.chartContainer}>
-        <Line
-          data={{
-            labels: Array(waveformData.length).fill(""),
-            datasets: [{ data: waveformData, borderColor: "#3b82f6", borderWidth: 2, tension: 0.2 }],
-          }}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { x: { display: false }, y: { display: false } },
-            elements: { point: { radius: 0 } },
-          }}
-        />
-      </div>
+      {recording && (
+        <div className={styles.chartContainer}>
+          <Line
+            data={{
+              labels: Array(waveformData.length).fill(""),
+              datasets: [{ data: waveformData, borderColor: "#3b82f6", borderWidth: 2, tension: 0.2 }],
+            }}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: { x: { display: false }, y: { display: false } },
+              elements: { point: { radius: 0 } },
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
