@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 # import internal modules
-from server.lib.model_context import lifespan
+from lib.model_context import lifespan
 
 # load environment variables from .env file
 load_dotenv()
@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 # import routes
-from server.routes import classes, lectures, recognition
+from routes import classes, lectures, recognition
 
 # include routes
 app.include_router(classes.router, prefix="/classes", tags=["Classes"])
