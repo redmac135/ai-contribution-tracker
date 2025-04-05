@@ -164,7 +164,7 @@ export default function RecordPage(): JSX.Element {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-component="RecordPage">
       <div className={styles.container}>
         <Dropdown>
           <DropdownTrigger>

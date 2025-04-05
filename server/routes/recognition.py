@@ -56,6 +56,20 @@ async def uploadToDB(text: string, sectionName: string):
         words = text.strip().split()
         firstName = words[0]
         newText = " ".join(words[1:])
+
+        Class.objects(name=sectionName).update_one(
+            {"students": firstName},
+            {
+                "$push": {
+                    "lectures": {
+                        "date": datetime.datetime.now(),
+                        "contrib": [
+                            {"name": firstName, "said": newText, "score": 0}
+                        ],
+                    }
+                }
+            },
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         
