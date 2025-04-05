@@ -20,12 +20,13 @@ app.add_middleware(
 )
 
 # import routes
-from routes import classes, lectures, recognition
+from routes import classes, lectures, recognition, admin
 
 # include routes
 app.include_router(classes.router, prefix="/classes", tags=["Classes"])
 app.include_router(lectures.router, prefix="/lectures", tags=["Lectures"])
 app.include_router(recognition.router, prefix="/recognition", tags=["Recognition"])
+app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 
 # run the app
 app.add_event_handler("startup", lambda: print("Server is starting..."))
