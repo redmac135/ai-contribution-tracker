@@ -1,11 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from models.Class import Class
 from models.Lecture import Lecture  # Ensure Lecture is imported
 
 router = APIRouter()
 
 @router.get("/info/")
-def classes(className: str):
+async def classes(className: str):
     # Fetch all lectures for the specified class
     lectures = Lecture.objects(class_name=className)
     class_object = Class.objects(name=className).first()
@@ -58,3 +58,11 @@ def classes(className: str):
         "class": class_object.name,
         "students": student_scores,
     }
+
+@router.get("/getAllClasses/")
+async def getAllClasses():
+    try:
+        classes = Class.objects().all()
+        return {"classes": [classes.to_json() for classe in classes]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

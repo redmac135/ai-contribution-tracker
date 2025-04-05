@@ -9,7 +9,6 @@ from mongoengine import (
     ObjectIdField,
 )
 
-
 class Contribution(EmbeddedDocument):
     name = StringField(required=True)  # Name of the student
     said = StringField(required=True)  # What the student said

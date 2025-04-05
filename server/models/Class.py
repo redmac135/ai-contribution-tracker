@@ -1,6 +1,5 @@
 from mongoengine import Document, StringField, ListField, ReferenceField, ObjectIdField
 
-
 class Class(Document):
     name = StringField(required=True)
     students = ListField(StringField(), required=True)  # List of student names
