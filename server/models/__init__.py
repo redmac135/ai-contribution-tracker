@@ -1,17 +1,22 @@
 import os
 from mongoengine import connect
+import certifi
 
-# Load the MongoDB URI from an environment variable
 uri = os.getenv("MONGODB_URI")
 if uri is None:
     raise ValueError("MONGODB_URI environment variable is not set")
 
 try:
-    # Connect to MongoDB Atlas
     connect(
-        db="StudentTracker",  # Name of your database
-        host=uri,  # Your MongoDB Atlas URI
-        alias="default",  # Use default alias for MongoEngine
+        db="StudentTracker",
+        host=uri,
+        ssl=True,
+        tls=True,
+        tlsAllowInvalidCertificates=True,
+        tlsCAFile=certifi.where(),
+        authentication_source='admin',
+        retryWrites=True,
+        serverSelectionTimeoutMS=5000
     )
     print("MongoDB connection successful")
 except Exception as e:

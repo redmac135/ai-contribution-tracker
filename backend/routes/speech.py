@@ -24,10 +24,6 @@ MIME_MAP = {
     "audio/x-wav": "wav",
     }
 
-
-
-
-
 @app.post("/convert/")
 async def upload_audio(file: UploadFile = File(...)):
     try:

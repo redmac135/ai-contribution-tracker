@@ -10,7 +10,7 @@ export async function GET() {
   try {
     // Figure out how to fetch data from the server
 
-    const res = await fetch('http://localhost:8000/lectures')
+    const res = await fetch('http://localhost:8000/classes')
     const data = await res.json()
     console.log('Fetched data:', data) // Log the fetched data
     return NextResponse.json(data)
