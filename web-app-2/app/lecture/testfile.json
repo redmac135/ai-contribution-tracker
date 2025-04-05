@@ -29,35 +29,35 @@
       "date": "2025-04-01",
       "Contribution": [
         {
-          "name": "studentName",
-          "said": "This is a super smart sentance, I am so proud of it. I deserve a 100"
+          "name": "SmartStudetn",
+          "said": "Therefore, based on the research evidence presented, we can specifically conclude that furthermore, this analysis demonstrates comprehensive understanding, which means our investigation provides substantial contributions to the field."
         },
         {
-          "name": "studentName",
-          "said": "blah blah blah2"
+          "name": "MediumStudent",
+          "said": "Therefore, based on some evidence presented, we can specifically conclude that furthermore, this analysis demonstrates comprehensive understanding, Thefore, we should consider Core drilling when expanding to southwestern America"
         },
         {
-          "name": "studentName2",
-          "said": "blah 3"
+          "name": "ShortAnswerStudent",
+          "said": "Short comment"
         }
       ]
     },
     {
       "id": 2,
-      "date": "2025-04-01",
+      "date": "2025-04-04",
       "Contribution": [
         {
-          "name": "studentName",
-          "said": "blah blah blah1",
+          "name": "Ethan",
+          "said": "Ethan has the best comment",
           "score": 100
         },
         {
-          "name": "studentName",
-          "said": "blah blah blah2",
+          "name": "Zena",
+          "said": "blah blah blah2, and thefore, I am inclinded to do this for the business",
           "score": 100
         },
         {
-          "name": "studentName2",
+          "name": "Philipp",
           "said": "blah blah blah3",
           "score": 100
         }

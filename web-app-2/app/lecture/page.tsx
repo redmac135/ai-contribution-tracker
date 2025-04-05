@@ -33,6 +33,10 @@ export default function LecturePage(): JSX.Element {
       'because',
       'research',
       'evidence',
+      'Inclinded',
+      'Which means',
+      'In addition',
+      'In conclusion',
     ]
     const smartWordCount = words.filter((word) =>
       smartWords.includes(word.toLowerCase())
@@ -67,17 +71,18 @@ export default function LecturePage(): JSX.Element {
           <div className="bg-background rounded-lg shadow-lg p-6">
             <div className="space-y-4">
               {Lecture.Contribution.map((contribution) => (
-                <div className="flex justify-between items-start p-4 border-b border-gray-200 last:border-0">
-                  <div className="flex flex-col">
+                <div className="flex justify-between items-center p-4 border-b border-gray-200 last:border-0">
+                  <div className="flex flex-col max-w-[85%]">
                     <span className="text-lg font-medium">
                       {contribution.name}
                     </span>
-                    <span className="text-sm text-gray-600 mt-1">
+                    <span className="text-sm text-gray-500 mt-1 mr-32">
                       <b>Class Comment:</b> &quot;{contribution.said}&quot;
                     </span>
                   </div>
                   <span className="text-lg font-semibold">
-                    Total Score: {analyzeContribution(contribution.said)}/10
+                    Total Score:{' '}
+                    <b>{analyzeContribution(contribution.said)}/10</b>
                   </span>
                 </div>
               ))}
