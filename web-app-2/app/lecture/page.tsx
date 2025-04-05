@@ -4,6 +4,24 @@ import styles from './lecture.module.css'
 import { Class } from './testfile.json' // Import JSON file
 import { Lectures } from './testfile.json' // Import JSON file
 
+import { NextResponse } from 'next/server'
+
+export async function GET() {
+  try {
+    // Figure out how to fetch data from the server
+
+    const res = await fetch('http://localhost:8000/lectures')
+    const data = await res.json()
+    console.log('Fetched data:', data) // Log the fetched data
+    return NextResponse.json(data)
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to fetch lectures' },
+      { status: 500 }
+    )
+  }
+}
+
 interface Student {
   id: number
   name: string
@@ -12,7 +30,7 @@ interface Student {
 }
 
 export default function LecturePage(): JSX.Element {
-  console.log('Test JSON data:', Class) // Log the imported data
+  // console.log('Test JSON data:', Class) // Log the imported data
 
   const analyzeContribution = (text: string): number => {
     // Base metrics
