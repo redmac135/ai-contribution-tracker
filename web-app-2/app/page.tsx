@@ -144,11 +144,14 @@ export default function RecordPage(): JSX.Element {
     ``;
 
     formData.append("file", file);
-    formData.append("section", section!);
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}recognition/convert/`,
+        `${process.env.NEXT_PUBLIC_API_URL}recognition/convert/?${new URLSearchParams(
+          {
+            section: section ?? "Lecture 1",
+          },
+        ).toString()}`,
         {
           method: "POST",
           body: formData,
@@ -158,7 +161,6 @@ export default function RecordPage(): JSX.Element {
       const serverResult = await response.json();
 
       console.log("Server response:", serverResult);
-      console.info("Transcription:", serverResult.transcription);
     } catch (error) {
       console.error("Upload failed:", error);
     }

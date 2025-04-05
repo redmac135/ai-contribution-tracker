@@ -4,7 +4,8 @@ import tempfile
 import time  # Import time for sleep
 from pathlib import Path
 from models.Class import Class
-from models.Lecture import Lecture
+from models.Lecture import Lecture, Contribution
+import re
 
 router = APIRouter()
 
@@ -31,6 +32,18 @@ MIME_MAP = {
 
 UPLOAD_DIR = "audio_uploads"
 Path(UPLOAD_DIR).mkdir(exist_ok=True)
+
+
+def extract_name_and_speech(input_string):
+    # Define a regular expression pattern
+    pattern = r"^([A-Za-z]+(?:'[A-Za-z]+)?(?:-[A-Za-z]+)*)(?:[.,!?;]*)(\s.*)?$"
+    match = re.match(pattern, input_string.strip())
+    if match:
+        name = match.group(1).strip()
+        speech = match.group(2).strip() if match.group(2) else ""
+        return name, speech
+    else:
+        return None, None
 
 
 @router.get("/classnames/")
@@ -96,9 +109,13 @@ async def upload_and_transcribe(
         raise HTTPException(status_code=500, detail="Transcription failed.")
 
     # the name if the first word of the transcription
-    name = transcription.split(" ")[0]
-    # what they said is what follows
-    said = transcription[len(name) + 1 :]
+    name, said = extract_name_and_speech(transcription)
+
+    if (not name) or (not said):
+        return {
+            "name": "Unknown",
+            "said": "Unknown",
+        }
 
     # upload to DB
 
@@ -119,16 +136,19 @@ async def upload_and_transcribe(
         class_name=section, date=time.strftime("%Y-%m-%d")
     ).first()
 
+    # contribution object
+    contribution = Contribution(
+        name=name,
+        said=said,
+        score=1,
+    )
+
     if not lecture_object:
         lecture_object = Lecture(
             class_name=section,
             date=time.strftime("%Y-%m-%d"),
             contrib=[
-                {
-                    "name": name,
-                    "said": said,
-                    "score": 1,
-                }
+                contribution,
             ],
         )
 
@@ -136,13 +156,7 @@ async def upload_and_transcribe(
 
     else:
         # 4. If it does, add the contribution to the lecture object
-        lecture_object.contrib.append(
-            {
-                "name": name,
-                "said": said,
-                "score": 1,
-            }
-        )
+        lecture_object.contrib.append(contribution)
         lecture_object.save()
 
     return {"name": name, "said": said}
