@@ -1,0 +1,47 @@
+.navbar {
+    background: linear-gradient(90deg, #3b82f6, #06b6d4); /* Gradient background */
+    color: white; /* Text color */
+    padding: 1rem 2rem; /* Spacing */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .navbar a {
+    text-decoration: none; /* Remove underline */
+    font-weight: 500; /* Slightly bold */
+    transition: color 0.3s ease; /* Smooth hover effect */
+  }
+
+  .navbar a:hover {
+    color: #facc15; /* Change color on hover */
+  }
+
+  .navbar a#active {
+    color: #facc15 !important; /* Change color on hover */
+    text-decoration: none; /* Remove underline */
+    font-weight: 500; /* Slightly bold */
+    transition: color 0.3s ease; /* Smooth hover effect */
+  }
+  
+  .navbar .font-bold {
+    font-size: 1.5rem; /* Larger font size for the brand */
+  }
+  
+  .navbarContent {
+    display: flex;
+    gap: 1.5rem; /* Space between items */
+  }
+  
+  .navbarItem {
+    padding: 0.5rem 1rem; /* Padding for items */
+    border-radius: 4px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+  }
+  
+  .navbarItem:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Subtle hover background */
+    background-color: 'black'; /* Subtle hover background */
+  }
