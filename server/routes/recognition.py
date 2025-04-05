@@ -3,8 +3,8 @@ from fastapi import APIRouter, File, UploadFile
 router = APIRouter()
 
 
-@router.post("/recognize/")
-async def upload_and_transcribe(file: UploadFile = File(...)):
+@router.post("/recognize")
+async def upload_and_transcribe(file: UploadFile = File(...), sectionName: str = Query(..., description="The name of the section")):
     try:
         # Process file upload
         raw_mime: str | None = file.content_type
@@ -46,3 +46,16 @@ async def upload_and_transcribe(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+async def uploadToDB(text: string, sectionName: string):
+    if not text:
+        return False
+
+    # Save the transcription to the database
+    try:
+        words = text.strip().split()
+        firstName = words[0]
+        newText = " ".join(words[1:])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+        

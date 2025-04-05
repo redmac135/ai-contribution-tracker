@@ -2,7 +2,6 @@ from fastapi import FastAPI
 import whisper
 from contextlib import asynccontextmanager
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # load whisper model

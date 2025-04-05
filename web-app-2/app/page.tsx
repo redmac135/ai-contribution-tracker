@@ -11,8 +11,15 @@ import {
   PointElement,
   LineElement,
 } from "chart.js";
-
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownSection,
+  DropdownItem,
+} from "@heroui/dropdown";
 import styles from "./page.module.css";
+import { error } from "console";
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement);
 
@@ -23,7 +30,7 @@ export default function RecordPage(): JSX.Element {
   const [time, setTime] = useState<number>(0);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null,
+    null
   );
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [waveformData, setWaveformData] = useState<WaveformData>([]);
@@ -32,6 +39,7 @@ export default function RecordPage(): JSX.Element {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const dataArrayRef = useRef<Uint8Array | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const [section, setSection] = useState<string | null>(null);
 
   useEffect(() => {
     if (recording) {
@@ -59,6 +67,7 @@ export default function RecordPage(): JSX.Element {
   };
 
   const startRecording = async (): Promise<void> => {
+    if (!section) setSection("Lecture 1");
     try {
       const audioStream: MediaStream =
         await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -118,17 +127,26 @@ export default function RecordPage(): JSX.Element {
     });
 
     formData.append("file", file);
+    formData.append("sectionName", section!);
 
     // audio to text conversion here
     try {
       // trailing slash needed to make sure post works fine
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}convert/`,
+        `${process.env.NEXT_PUBLIC_API_URL}recognition/recognize/`,
         {
           method: "POST",
           body: formData,
-        },
-      );
+        }
+      ).then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        } else {
+          console.log("Upload successful");
+        }
+        console.log(res);
+        return res;
+      });
 
       const serverResult = await response.json();
 
@@ -140,21 +158,42 @@ export default function RecordPage(): JSX.Element {
     }
   }
 
+  const sections = ["Lecture 1", "Lecture 2", "Lecture 3"];
+  const selectSection = (section: string) => {
+    setSection(section);
+  };
+
   return (
     <div className={styles.container}>
-      <Button
-        className={styles.recordButton}
-        onPress={recording ? stopRecording : startRecording}
-      >
-        {recording ? (
-          <StopIcon className={styles.icon} />
-        ) : (
-          <MicrophoneIcon className={styles.icon} />
-        )}
-      </Button>
-      {recording && <p className={styles.timer}>Recording: {time}s</p>}
-      {recording && (
-        <div className={styles.chartContainer}>
+      <div className={styles.container}>
+        <Dropdown>
+          <DropdownTrigger>
+            <Button variant="bordered">{section ?? "Select A Section"}</Button>
+          </DropdownTrigger>
+          <DropdownMenu aria-label="Static Actions">
+            {sections.map((section, index) => (
+              <DropdownItem key={index} onPress={() => selectSection(section)}>
+                {section}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </Dropdown>
+      </div>
+      <div className={styles.container}>
+        <Button
+          className={styles.recordButton}
+          onPress={recording ? stopRecording : startRecording}
+        >
+          {recording ? (
+            <StopIcon className={styles.icon} />
+          ) : (
+            <MicrophoneIcon className={styles.icon} />
+          )}
+        </Button>
+      </div>
+      <div className={styles.chartContainer}>
+        {recording && <p className={styles.timer}>Recording: {time}s</p>}
+        {recording && (
           <Line
             data={{
               labels: Array(waveformData.length).fill(""),
@@ -174,8 +213,8 @@ export default function RecordPage(): JSX.Element {
               elements: { point: { radius: 0 } },
             }}
           />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
