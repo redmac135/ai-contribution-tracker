@@ -15,11 +15,10 @@ import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
-  DropdownSection,
   DropdownItem,
 } from "@heroui/dropdown";
+
 import styles from "./page.module.css";
-import { error } from "console";
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement);
 
@@ -29,12 +28,14 @@ export default function RecordPage(): JSX.Element {
   const [recording, setRecording] = useState<boolean>(false);
   const [time, setTime] = useState<number>(0);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
+    null,
+  );
   // We'll use a ref to store the audio chunks.
   const audioChunksRef = useRef<Blob[]>([]);
   // Optionally, if you need to display the count, you can also have state:
   const [chunkCount, setChunkCount] = useState<number>(0);
-  
+
   const [waveformData, setWaveformData] = useState<WaveformData>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -68,7 +69,8 @@ export default function RecordPage(): JSX.Element {
   const startRecording = async (): Promise<void> => {
     if (!section) setSection("Lecture 1");
     try {
-      const audioStream: MediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const audioStream: MediaStream =
+        await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder: MediaRecorder = new MediaRecorder(audioStream, {
         mimeType: "audio/webm;codecs=opus",
       });
@@ -82,7 +84,8 @@ export default function RecordPage(): JSX.Element {
       recorder.start();
 
       const audioContext: AudioContext = new AudioContext();
-      const source: MediaStreamAudioSourceNode = audioContext.createMediaStreamSource(audioStream);
+      const source: MediaStreamAudioSourceNode =
+        audioContext.createMediaStreamSource(audioStream);
       const analyser: AnalyserNode = audioContext.createAnalyser();
 
       analyser.fftSize = 128;
@@ -129,23 +132,31 @@ export default function RecordPage(): JSX.Element {
     // Log the current audio chunks from the ref.
     console.log("Audio chunks count:", audioChunksRef.current.length);
 
-    const audioBlob = new Blob(audioChunksRef.current, { type: mediaRecorder?.mimeType });
+    const audioBlob = new Blob(audioChunksRef.current, {
+      type: mediaRecorder?.mimeType,
+    });
     // Create a File with proper type information
     const file = new File([audioBlob], "recording", {
       type: audioBlob.type, // This preserves the MIME type
       lastModified: Date.now(),
-    });``
+    });
+
+    ``;
 
     formData.append("file", file);
-    formData.append("sectionName", section!);
+    formData.append("section", section!);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}recognition/convert/`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}recognition/convert/`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
       const serverResult = await response.json();
+
       console.log("Server response:", serverResult);
       console.info("Transcription:", serverResult.transcription);
     } catch (error) {
