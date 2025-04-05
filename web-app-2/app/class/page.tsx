@@ -1,36 +1,42 @@
 "use client";
 
-import { useState } from 'react';
-import styles from './page.module.css';
+import React, { useEffect, useState } from "react";
+import styles from "./page.module.css";
 
-const initialStudents = [
-    { name: 'Student 1', contributions: [8.0, 7.0, 9.0, 6.0] },
-    { name: 'Student 2', contributions: [6.0, 8.0, 7.0, 9.0] },
-    { name: 'Student 3', contributions: [9.0, 6.0, 8.0, 7.0] },
-    { name: 'Student 4', contributions: [7.0, 9.0, 6.0, 8.0] },
-    { name: 'Student 5', contributions: [8.0, 7.0, 9.0, 6.0] },
-];
+const TablePage = ({ className }: { className: string }) => {
+    const [students, setStudents] = useState<any[]>([]);
+    const [dates, setDates] = useState<string[]>([]);
+    const [classTitle, setClassTitle] = useState<string>("");
+    const [error, setError] = useState<string | null>(null);
+    const [editingCell, setEditingCell] = useState<{ row: number; col: number } | null>(null);
+    const [editValue, setEditValue] = useState("");
 
-const dates = ['2025-03-16', '2025-03-17', '2025-03-18', '2025-03-19'];
+    useEffect(() => {
+        // Fetch class data from the API
+        fetch(`/api/info/?className=${className}`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch class data");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (data.error) {
+                    setError(data.error);
+                } else {
+                    setClassTitle(data.class);
+                    const fetchedStudents = Object.entries(data.students).map(([name, contributions]) => ({
+                        name,
+                        contributions: Object.values(contributions),
+                    }));
+                    setStudents(fetchedStudents);
 
-const TablePage = () => {
-    const [students, setStudents] = useState(initialStudents);
-    const [newStudentName, setNewStudentName] = useState('');
-    const [editingCell, setEditingCell] = useState<{ row: number, col: number } | null>(null);
-    const [editValue, setEditValue] = useState('');
-
-    const handleAddStudent = () => {
-        if (newStudentName.trim() !== '') {
-            setStudents([...students, { name: newStudentName, contributions: [0.0, 0.0, 0.0, 0.0] }]);
-            setNewStudentName('');
-        }
-    };
-
-    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            handleAddStudent();
-        }
-    };
+                    const fetchedDates = Object.keys(data.students[Object.keys(data.students)[0]] || {});
+                    setDates(fetchedDates);
+                }
+            })
+            .catch(() => setError("Failed to fetch class data"));
+    }, [className]);
 
     const calculateAverage = (contributions: number[]) => {
         const total = contributions.reduce((acc, curr) => acc + curr, 0);
@@ -47,7 +53,7 @@ const TablePage = () => {
     };
 
     const handleEditKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter' && editingCell) {
+        if (event.key === "Enter" && editingCell) {
             const updatedStudents = [...students];
             const newValue = parseFloat(editValue);
             if (!isNaN(newValue)) {
@@ -58,13 +64,22 @@ const TablePage = () => {
         }
     };
 
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
+    if (!students.length || !dates.length) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div className={styles.container}>
+            <h1>Class: {classTitle}</h1>
             <table className={styles.table}>
                 <thead>
                     <tr>
                         <th className={styles.th}>Student Name</th>
-                        {dates.map(date => (
+                        {dates.map((date) => (
                             <th key={date} className={styles.th}>{date}</th>
                         ))}
                         <th className={styles.th}>Average</th>
@@ -74,10 +89,10 @@ const TablePage = () => {
                     {students.map((student, rowIndex) => (
                         <tr key={rowIndex} className={styles.tr}>
                             <td className={styles.td}>{student.name}</td>
-                            {student.contributions.map((contribution, colIndex) => (
+                            {student.contributions.map((contribution: number, colIndex: number) => (
                                 <td
                                     key={colIndex}
-                                    className={`${styles.td} ${editingCell && editingCell.row === rowIndex && editingCell.col === colIndex ? styles.editing : ''}`}
+                                    className={`${styles.td} ${editingCell && editingCell.row === rowIndex && editingCell.col === colIndex ? styles.editing : ""}`}
                                     onClick={() => handleCellClick(rowIndex, colIndex, contribution)}
                                 >
                                     {editingCell && editingCell.row === rowIndex && editingCell.col === colIndex ? (
@@ -100,17 +115,6 @@ const TablePage = () => {
                     ))}
                 </tbody>
             </table>
-            <div className={styles.inputContainer}>
-                <input
-                    type="text"
-                    value={newStudentName}
-                    onChange={(e) => setNewStudentName(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Enter student name"
-                    className={styles.input}
-                />
-                <button onClick={handleAddStudent} className={styles.button}>Add Student</button>
-            </div>
         </div>
     );
 };
