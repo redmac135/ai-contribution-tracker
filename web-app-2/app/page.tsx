@@ -115,6 +115,10 @@ export default function RecordPage(): JSX.Element {
 
     formData.append("file", file);
 
+    // //
+    //
+    //
+    // audio to text conversion here
     try {
       const response = await fetch(`http://127.0.0.1:8000/convert/`, {
         method: "POST",
