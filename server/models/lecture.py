@@ -17,6 +17,7 @@ class Contribution(EmbeddedDocument):
 
 
 class Lecture(Document):
+    class_name = StringField(required=True)  # Name of the class
     date = DateField(required=True)  # Date of the lecture
     contrib = ListField(
         EmbeddedDocumentField(Contribution), required=True
