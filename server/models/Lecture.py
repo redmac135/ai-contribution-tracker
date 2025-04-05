@@ -28,3 +28,6 @@ class Lecture(Document):
         "ordering": ["-date"],  # Default ordering by date (descending)
         "auto_create_index": True,
     }
+
+
+Lecture.create_index([("class_name", 1), ("date", -1)], unique=True)

@@ -8,15 +8,8 @@ if uri is None:
 
 try:
     connect(
-        db="StudentTracker",
-        host=uri,
-        ssl=True,
-        tls=True,
-        tlsAllowInvalidCertificates=True,
-        tlsCAFile=certifi.where(),
-        authentication_source='admin',
-        retryWrites=True,
-        serverSelectionTimeoutMS=5000
+        db="StudentTracker",  # Name of your database
+        host=uri,  # Your MongoDB Atlas URI
     )
     print("MongoDB connection successful")
 except Exception as e:
