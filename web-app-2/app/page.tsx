@@ -11,6 +11,7 @@ import {
   PointElement,
   LineElement,
 } from "chart.js";
+
 import styles from "./page.module.css";
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement);
@@ -22,7 +23,7 @@ export default function RecordPage(): JSX.Element {
   const [time, setTime] = useState<number>(0);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null
+    null,
   );
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [waveformData, setWaveformData] = useState<WaveformData>([]);
@@ -38,6 +39,7 @@ export default function RecordPage(): JSX.Element {
     } else if (timerRef.current) {
       clearInterval(timerRef.current);
     }
+
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -61,6 +63,7 @@ export default function RecordPage(): JSX.Element {
       const audioStream: MediaStream =
         await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder: MediaRecorder = new MediaRecorder(audioStream);
+
       setStream(audioStream);
       setMediaRecorder(recorder);
       setAudioChunks([]);
@@ -71,6 +74,7 @@ export default function RecordPage(): JSX.Element {
       const source: MediaStreamAudioSourceNode =
         audioContext.createMediaStreamSource(audioStream);
       const analyser: AnalyserNode = audioContext.createAnalyser();
+
       analyser.fftSize = 128;
       source.connect(analyser);
       audioContextRef.current = audioContext;
@@ -99,10 +103,10 @@ export default function RecordPage(): JSX.Element {
       cancelAnimationFrame(animationFrameRef.current);
     }
 
-    uploadAudio(audioChunks);
+    uploadAudio();
   };
 
-  async function uploadAudio(blob: Blob[]) {
+  async function uploadAudio() {
     const formData = new FormData();
 
     const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
@@ -115,17 +119,19 @@ export default function RecordPage(): JSX.Element {
 
     formData.append("file", file);
 
-    // //
-    //
-    //
     // audio to text conversion here
     try {
-      const response = await fetch(`http://127.0.0.1:8000/convert/`, {
-        method: "POST",
-        body: formData,
-      });
+      // trailing slash needed to make sure post works fine
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}convert/`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
       const serverResult = await response.json();
+
       console.log("Server response:", serverResult);
 
       console.info("Transcription:", serverResult.transcription);
@@ -137,8 +143,8 @@ export default function RecordPage(): JSX.Element {
   return (
     <div className={styles.container}>
       <Button
-        onPress={recording ? stopRecording : startRecording}
         className={styles.recordButton}
+        onPress={recording ? stopRecording : startRecording}
       >
         {recording ? (
           <StopIcon className={styles.icon} />
