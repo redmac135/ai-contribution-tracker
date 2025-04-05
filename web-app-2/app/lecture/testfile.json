@@ -29,22 +29,39 @@
       "date": "2025-04-01",
       "Contribution": [
         {
-          "id": 1,
-          "name": "Contribution Name",
+          "name": "studentName",
+          "said": "This is a super smart sentance, I am so proud of it. I deserve a 100"
+        },
+        {
+          "name": "studentName",
+          "said": "blah blah blah2"
+        },
+        {
+          "name": "studentName2",
+          "said": "blah 3"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "date": "2025-04-01",
+      "Contribution": [
+        {
+          "name": "studentName",
+          "said": "blah blah blah1",
           "score": 100
         },
         {
-          "id": 1,
-          "name": "Contribution Name",
+          "name": "studentName",
+          "said": "blah blah blah2",
           "score": 100
         },
         {
-          "id": 1,
-          "name": "Contribution Name",
+          "name": "studentName2",
+          "said": "blah blah blah3",
           "score": 100
         }
-      ],
-      "byStudent": [{ "name ": "student name", "OverallScore": 6 }]
+      ]
     }
   ]
 }

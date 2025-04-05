@@ -1,7 +1,8 @@
 'use client'
-
 import { useState } from 'react'
 import styles from './lecture.module.css'
+import { Class } from './testfile.json' // Import JSON file
+import { Lectures } from './testfile.json' // Import JSON file
 
 interface Student {
   id: number
@@ -11,75 +12,79 @@ interface Student {
 }
 
 export default function LecturePage(): JSX.Element {
-  const [students] = useState<Student[]>([
-    {
-      id: 1,
-      name: `'Name 1'`,
-      score: 6,
-      contribution: [`'Contribution 1', 'Contrbution 2', 'contribution3'`],
-    },
-    {
-      id: 2,
-      name: 'Name 2',
-      score: 5,
-      contribution: ['Contribution 1', 'contribution3'],
-    },
-    {
-      id: 3,
-      name: 'Name 3',
-      score: 2,
-      contribution: ['Contribution 1'],
-    },
-    {
-      id: 4,
-      name: 'Name 4',
-      score: 5,
-      contribution: ['Contribution 1'],
-    },
-    {
-      id: 5,
-      name: 'Name 5',
-      score: 3,
-      contribution: ['Contribution 1', 'Contrbution 2', 'contribution3'],
-    },
-  ])
+  console.log('Test JSON data:', Class) // Log the imported data
 
-  const currentDate = new Date().toLocaleDateString()
+  const analyzeContribution = (text: string): number => {
+    // Base metrics
+    const words = text.split(' ')
+    const uniqueWords = new Set(words.map((w) => w.toLowerCase()))
+    const avgWordLength =
+      words.reduce((sum, word) => sum + word.length, 0) / words.length
+
+    // Smart words indicators
+    const smartWords = [
+      'therefore',
+      'however',
+      'moreover',
+      'specifically',
+      'furthermore',
+      'analysis',
+      'conclude',
+      'because',
+      'research',
+      'evidence',
+    ]
+    const smartWordCount = words.filter((word) =>
+      smartWords.includes(word.toLowerCase())
+    ).length
+
+    // Calculate score components
+    const lengthScore = Math.min(words.length / 20, 1) * 3 // Up to 3 points for length
+    const uniqueScore = (uniqueWords.size / words.length) * 2 // Up to 2 points for variety
+    const complexityScore = Math.min(avgWordLength / 6, 1) * 2 // Up to 2 points for word length
+    const smartScore = Math.min(smartWordCount / 3, 1) * 3 // Up to 3 points for smart words
+
+    // Calculate final score
+    const totalScore = Math.round(
+      lengthScore + uniqueScore + complexityScore + smartScore
+    )
+
+    // Ensure score is between 1 and 10
+    return Math.max(1, Math.min(10, totalScore))
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-6">Lecture: 2257 Lecture</h1>
+    <>
+      {Lectures.map((Lecture) => (
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-4xl font-bold mb-6">Lecture: 2257 Lecture</h1>
 
-      <div className="flex items-center mb-8">
-        <h2 className="text-2xl font-semibold">Date:</h2>
-        <span className="ml-4 text-2xl">{currentDate}</span>
-      </div>
+          <div className="flex items-center mb-8">
+            <h2 className="text-2xl font-semibold">Date:</h2>
+            <span className="ml-4 text-2xl">{Lecture.date}</span>
+          </div>
 
-      <div className="bg-background rounded-lg shadow-lg p-6">
-        <div className="space-y-4">
-          {students.map((student) => (
-            <div
-              key={student.id}
-              className="flex justify-between items-start p-4 border-b border-gray-200 last:border-0"
-            >
-              <div className="flex flex-col">
-                <span className="text-lg font-medium">{student.name}</span>
-                {student.contribution.map((contribution) => (
-                  <span
-                    key={contribution}
-                    className="text-sm text-gray-600 mt-1"
-                  >
-                    <b>Class Comment:</b> &quot;{contribution}&quot;
+          <div className="bg-background rounded-lg shadow-lg p-6">
+            <div className="space-y-4">
+              {Lecture.Contribution.map((contribution) => (
+                <div className="flex justify-between items-start p-4 border-b border-gray-200 last:border-0">
+                  <div className="flex flex-col">
+                    <span className="text-lg font-medium">
+                      {contribution.name}
+                    </span>
+                    <span className="text-sm text-gray-600 mt-1">
+                      <b>Class Comment:</b> &quot;{contribution.said}&quot;
+                    </span>
+                  </div>
+                  <span className="text-lg font-semibold">
+                    Total Score: {analyzeContribution(contribution.said)}/10
                   </span>
-                ))}
-              </div>
-              <span className="text-lg font-semibold">
-                Total Score: {student.score}/10
-              </span>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-      </div>
-    </div>
+      ))}
+    </>
   )
 }
