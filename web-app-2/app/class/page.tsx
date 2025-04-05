@@ -157,7 +157,6 @@ const TablePage = () => {
                         onChange={handleEditChange}
                         onKeyPress={handleEditKeyPress}
                         onBlur={() => setEditingCell(null)}
-                        autoFocus
                         className={styles.input}
                       />
                     ) : (
